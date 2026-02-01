@@ -1,37 +1,20 @@
-const express = require('express')
-require('dotenv').config()
-const cors= require('cors')
-const connect = require('./src/connnect/db')
-const userRoutes  = require('./src/routers/useRoutes')
-const app = express()
+const express = require("express");
+require("dotenv").config();
+const cors = require("cors");
+const connect = require("./src/connnect/db");
+const userRoutes = require("./src/routers/useRoutes");
 
-app.use(cors({
-    origin : '*'
-}))
+const app = express();
 
-app.use(express.json())
-app.use('/api',userRoutes)
-let isConnected = false
+app.use(cors());
+app.use(express.json());
 
-try {
-    connect()
-    isConnected= true
-} catch (error) {
-    console.log(error);
-}
-app.use((req,res,next)=>{
-    if(!isConnected){
-        connect()
-    }
-    next()
-})
+// connect DB on every request (safe in serverless)
+app.use(async (req, res, next) => {
+  await connect();
+  next();
+});
 
-// try {
-//     app.listen(process.env.PORT,()=>{     
-//     })
-// } catch (error) {
-//  console.log(error);    
-// }
+app.use("/api", userRoutes);
 
-
-module.exports =app 
+module.exports = app;
