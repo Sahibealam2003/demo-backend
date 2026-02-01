@@ -15,6 +15,10 @@ app.use(async (req, res, next) => {
   next();
 });
 
+app.get("/", (req, res) => {
+  res.json({ status: "Server is running" });
+});
+
 app.use("/api", userRoutes);
 
 module.exports = app;
